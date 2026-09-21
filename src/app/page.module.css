@@ -1,0 +1,155 @@
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  min-height: 60vh;
+}
+
+.heroContent {
+  flex: 1;
+  max-width: 600px;
+}
+
+.title {
+  font-size: 3.5rem;
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  opacity: 0.8;
+  margin-bottom: 40px;
+}
+
+.ctaGroup {
+  display: flex;
+  gap: 16px;
+}
+
+.primaryBtn, .secondaryBtn {
+  padding: 12px 28px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border-radius: 30px;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.primaryBtn {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 14px 0 rgba(217, 119, 6, 0.39);
+}
+
+.primaryBtn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.secondaryBtn {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--foreground);
+}
+
+.secondaryBtn:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  .secondaryBtn:hover {
+    background: rgba(255,255,255,0.05);
+  }
+}
+
+.heroImage {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  max-width: 500px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+.mandala {
+  animation: spin 30s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  padding: 24px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--glass-shadow), 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.textBtn {
+  margin-top: 16px;
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-weight: 600;
+  padding: 0;
+  position: relative;
+}
+
+.textBtn::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: var(--primary);
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.textBtn:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .heroContent {
+    max-width: 100%;
+  }
+  
+  .ctaGroup {
+    justify-content: center;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+  }
+}

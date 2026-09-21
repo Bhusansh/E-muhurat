@@ -1,0 +1,117 @@
+.calendarContainer {
+  margin: 60px auto;
+  padding: 32px;
+  max-width: 900px;
+  border-radius: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 1.5rem;
+  color: var(--primary);
+}
+
+.month {
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+
+.dayHeader {
+  text-align: center;
+  font-weight: 600;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--glass-border);
+  opacity: 0.8;
+}
+
+.dayCell {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  min-height: 120px;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.dayCell:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.dateNumber {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
+.tithi, .nakshatra {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.auspicious {
+  border-color: var(--primary);
+  background: rgba(217, 119, 6, 0.05);
+}
+
+.auspicious:hover {
+  background: rgba(217, 119, 6, 0.1);
+}
+
+.indicator {
+  margin-top: auto;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  background: var(--primary);
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dayCell {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  .dayCell:hover {
+    background: rgba(0, 0, 0, 0.4);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .dayHeader {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

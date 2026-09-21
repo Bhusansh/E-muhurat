@@ -1,0 +1,73 @@
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.backBtn {
+  display: inline-block;
+  margin-bottom: 24px;
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.backBtn:hover {
+  opacity: 0.8;
+}
+
+.title {
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.date {
+  font-size: 1.2rem;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.card {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cardTitle {
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+  color: var(--primary);
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 12px;
+}
+
+.inauspiciousCard .cardTitle {
+  color: var(--secondary);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.label {
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.value {
+  font-weight: 600;
+  text-align: right;
+}
