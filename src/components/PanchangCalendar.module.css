@@ -1,117 +1,327 @@
 .calendarContainer {
   margin: 60px auto;
-  padding: 32px;
-  max-width: 900px;
-  border-radius: 20px;
+  padding: 40px;
+  max-width: 1100px;
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.3) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.navGroup {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.navBtn {
+  background: white;
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.navBtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 24px rgba(217, 119, 6, 0.2);
+  background: var(--primary);
+  color: white;
 }
 
 .title {
-  font-size: 1.5rem;
-  color: var(--primary);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+  min-width: 220px;
+  text-align: center;
 }
 
-.month {
+.year {
+  color: var(--primary);
+  font-weight: 300;
+}
+
+.locationSelector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  color: var(--foreground);
+  opacity: 0.9;
+  font-weight: 500;
+  background: rgba(0,0,0,0.05);
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+.cityDropdown {
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 1rem;
   font-weight: 600;
-  font-size: 1.2rem;
+  color: var(--primary);
+  cursor: pointer;
+  outline: none;
+  padding-right: 4px;
+}
+
+.cityDropdown option {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.calendarWrapper {
+  overflow-x: auto;
+  padding-bottom: 16px;
+}
+
+/* Hide scrollbar for modern browsers */
+.calendarWrapper::-webkit-scrollbar {
+  height: 8px;
+}
+.calendarWrapper::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.02);
+  border-radius: 4px;
+}
+.calendarWrapper::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.1);
+  border-radius: 4px;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(7, minmax(120px, 1fr));
+  gap: 16px;
+  min-width: 800px;
 }
 
 .dayHeader {
   text-align: center;
   font-weight: 600;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--glass-border);
-  opacity: 0.8;
+  font-size: 0.95rem;
+  padding-bottom: 16px;
+  color: var(--foreground);
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.emptyCell {
+  background: transparent;
+}
+
+.dayCellEmpty {
+  padding: 16px;
+  min-height: 140px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  border: 1px dashed rgba(0,0,0,0.1);
+  opacity: 0.5;
 }
 
 .dayCell {
   display: flex;
   flex-direction: column;
-  padding: 12px;
-  min-height: 120px;
-  background: rgba(255, 255, 255, 0.4);
-  border: 1px solid var(--glass-border);
-  border-radius: 8px;
-  transition: transform 0.2s ease;
+  padding: 16px;
+  min-height: 140px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255,255,255,0.8);
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
 }
 
 .dayCell:hover {
-  transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.6);
+  transform: translateY(-4px) scale(1.02);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+  z-index: 2;
+  border-color: rgba(255,255,255,1);
+}
+
+.dateHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
 .dateNumber {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  margin-bottom: 8px;
+  color: var(--foreground);
+}
+
+.indicatorDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 8px var(--primary);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(217, 119, 6, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(217, 119, 6, 0); }
 }
 
 .details {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  font-size: 0.85rem;
-  margin-bottom: 12px;
+  gap: 6px;
+  flex: 1;
 }
 
 .tithi, .nakshatra {
+  font-size: 0.85rem;
+  color: var(--foreground);
+  opacity: 0.8;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  background: rgba(0,0,0,0.04);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 500;
 }
 
 .auspicious {
-  border-color: var(--primary);
-  background: rgba(217, 119, 6, 0.05);
+  background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(254,243,199,0.5) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.4);
 }
 
 .auspicious:hover {
-  background: rgba(217, 119, 6, 0.1);
+  background: linear-gradient(135deg, #fff 0%, #fef3c7 100%);
+  border-color: var(--primary);
+  box-shadow: 0 12px 24px rgba(245, 158, 11, 0.15);
 }
 
-.indicator {
-  margin-top: auto;
+.auspiciousLabel {
+  margin-top: 12px;
   font-size: 0.75rem;
-  font-weight: 600;
-  color: white;
-  background: var(--primary);
-  padding: 4px 8px;
-  border-radius: 4px;
+  font-weight: 700;
+  color: var(--primary-hover);
+  background: rgba(245, 158, 11, 0.15);
+  padding: 6px 10px;
+  border-radius: 8px;
   text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.loading {
+  grid-column: span 7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 1.2rem;
+  gap: 16px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(217, 119, 6, 0.2);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 @media (prefers-color-scheme: dark) {
-  .dayCell {
-    background: rgba(0, 0, 0, 0.2);
+  .calendarContainer {
+    background: linear-gradient(145deg, rgba(28,25,23,0.8) 0%, rgba(28,25,23,0.4) 100%);
+    border-color: rgba(255,255,255,0.05);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
   }
+  
+  .navBtn {
+    background: rgba(255,255,255,0.1);
+    color: white;
+  }
+  
+  .locationSelector {
+    background: rgba(255,255,255,0.1);
+  }
+  
+  .dayCellEmpty {
+    background: rgba(0,0,0,0.2);
+    border-color: rgba(255,255,255,0.05);
+  }
+  
+  .dayCell {
+    background: rgba(41,37,36,0.6);
+    border-color: rgba(255,255,255,0.1);
+  }
+  
   .dayCell:hover {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(41,37,36,0.9);
+    border-color: rgba(255,255,255,0.2);
+  }
+  
+  .tithi, .nakshatra {
+    background: rgba(255,255,255,0.05);
+  }
+  
+  .auspicious {
+    background: linear-gradient(135deg, rgba(63,39,0,0.6) 0%, rgba(41,37,36,0.6) 100%);
+    border-color: rgba(245,158,11,0.3);
+  }
+  
+  .auspicious:hover {
+    background: linear-gradient(135deg, rgba(82,51,0,0.8) 0%, rgba(63,39,0,0.8) 100%);
   }
 }
 
 @media (max-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
+  .calendarContainer {
+    padding: 24px;
+    margin: 40px 16px;
   }
-  .dayHeader {
-    display: none;
+  
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
   }
-}
-
-@media (max-width: 480px) {
-  .grid {
-    grid-template-columns: 1fr;
+  
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .navBtn {
+    width: 36px;
+    height: 36px;
   }
 }

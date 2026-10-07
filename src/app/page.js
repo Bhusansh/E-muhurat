@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import styles from './page.module.css';
+import { supabase } from '../utils/supabase';
 import MuhuratForm from '@/components/MuhuratForm';
 import ResultsList from '@/components/ResultsList';
 import PanchangCalendar from '@/components/PanchangCalendar';
@@ -24,25 +25,54 @@ export default function Home() {
     document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleSearch = (formData) => {
+  const handleSearch = async (formData) => {
     setIsLoading(true);
     setSearchResults(null);
-    
-    // Simulate API call
-    setTimeout(() => {
-      // Mock results
-      setSearchResults([
-        { day: 'Thursday', date: '22 Oct', timeWindow: '09:30 AM - 11:45 AM', nakshatra: 'Rohini', tithi: 'Panchami', reason: 'Rohini Nakshatra combined with Panchami Tithi forms an extremely auspicious Amrit Siddhi Yoga, perfect for long-lasting success.' },
-        { day: 'Monday', date: '26 Oct', timeWindow: '06:15 AM - 08:30 AM', nakshatra: 'Mrigashirsha', tithi: 'Navami', reason: 'The presence of Mrigashirsha Nakshatra brings gentle and creative energy, highly favored for starting new peaceful ventures.' },
-        { day: 'Friday', date: '30 Oct', timeWindow: '10:00 AM - 01:15 PM', nakshatra: 'Pushya', tithi: 'Trayodashi', reason: 'Pushya is the most auspicious Nakshatra. Combined with Friday (Venus), it brings immense wealth, harmony, and prosperity.' }
-      ]);
+
+    try {
+      // Import supabase dynamically or assume it's imported at the top
+      // Wait, we need to import supabase at the top of the file!
+      const { data, error } = await supabase
+        .from('v_panchang_full')
+        .select('*')
+        .eq('reference_city', formData.location)
+        .gte('gregorian_date', formData.startDate)
+        .lte('gregorian_date', formData.endDate)
+        .eq('yoga_quality', 'Auspicious')
+        .order('gregorian_date', { ascending: true })
+        .limit(10); // Limit results
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        const formattedResults = data.map(d => {
+          const dateObj = new Date(d.gregorian_date);
+          const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+          const dateString = dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+          
+          return {
+            day: dayName,
+            date: dateString,
+            timeWindow: '06:00 AM - 06:00 PM', // Placeholder if time isn't in the view
+            nakshatra: d.nakshatra_en || 'Unknown',
+            tithi: d.tithi_en || 'Unknown',
+            reason: `${d.nakshatra_en || 'This Nakshatra'} and ${d.tithi_en || 'Tithi'} make this an auspicious date for ${formData.eventType.replace('_', ' ')}.`
+          };
+        });
+        setSearchResults(formattedResults);
+      } else {
+        setSearchResults([]); // No results found
+      }
+    } catch (err) {
+      console.error("Error fetching muhurat:", err);
+      // Fallback or show error
+      setSearchResults([]);
+    } finally {
       setIsLoading(false);
-      
-      // Scroll to results
       setTimeout(() => {
         document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
-    }, 1500);
+    }
   };
 
   return (
