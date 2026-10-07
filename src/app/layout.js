@@ -1,5 +1,6 @@
 import "./globals.css";
 import Footer from "@/components/Footer";
+import SpaceBackground from "@/components/SpaceBackground";
 
 export const metadata = {
   title: "eMuhurat - Find Your Auspicious Time",
@@ -10,6 +11,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
+        <SpaceBackground />
         <header className="glass" style={{ margin: '16px 24px', padding: '16px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--primary)' }}>eMuhurat</div>
           <nav>

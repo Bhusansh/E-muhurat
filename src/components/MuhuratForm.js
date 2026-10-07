@@ -6,7 +6,7 @@ import styles from './MuhuratForm.module.css';
 export default function MuhuratForm({ onSearch, externalEventType }) {
   const [formData, setFormData] = useState({
     eventType: 'marriage',
-    location: '',
+    location: 'New Delhi',
     startDate: '',
     endDate: ''
   });
@@ -58,28 +58,23 @@ export default function MuhuratForm({ onSearch, externalEventType }) {
 
         <div className={styles.formGroup}>
           <label htmlFor="location">Location (City)</label>
-          <input 
-            type="text" 
+          <select 
             id="location" 
             name="location" 
-            list="cities"
-            placeholder="e.g. Mumbai, Delhi"
-            value={formData.location}
+            value={formData.location || 'New Delhi'}
             onChange={handleChange}
             className={styles.input}
             required
-            autoComplete="off"
-          />
-          <datalist id="cities">
-            <option value="Mumbai" />
-            <option value="Delhi" />
-            <option value="Bangalore" />
-            <option value="Hyderabad" />
-            <option value="Chennai" />
-            <option value="Kolkata" />
-            <option value="Pune" />
-            <option value="Ahmedabad" />
-          </datalist>
+          >
+            <option value="New Delhi">New Delhi</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Bangalore">Bangalore</option>
+            <option value="Hyderabad">Hyderabad</option>
+            <option value="Chennai">Chennai</option>
+            <option value="Kolkata">Kolkata</option>
+            <option value="Pune">Pune</option>
+            <option value="Ahmedabad">Ahmedabad</option>
+          </select>
         </div>
 
         <div className={styles.dateRow}>

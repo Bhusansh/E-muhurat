@@ -30,17 +30,18 @@ export default function Home() {
     setSearchResults(null);
 
     try {
-      // Import supabase dynamically or assume it's imported at the top
-      // Wait, we need to import supabase at the top of the file!
+      // Import dynamically to avoid top-level issues if needed, or assume it's there
+      const { evaluateDay, calculateChoghadiya } = await import('../utils/muhuratLogic');
+      
+      // Fetch data for a 15 day window instead of strictly filtering in SQL
       const { data, error } = await supabase
         .from('v_panchang_full')
         .select('*')
         .eq('reference_city', formData.location)
         .gte('gregorian_date', formData.startDate)
         .lte('gregorian_date', formData.endDate)
-        .eq('yoga_quality', 'Auspicious')
         .order('gregorian_date', { ascending: true })
-        .limit(10); // Limit results
+        .limit(100); 
 
       if (error) throw error;
 
@@ -48,24 +49,39 @@ export default function Home() {
         const formattedResults = data.map(d => {
           const dateObj = new Date(d.gregorian_date);
           const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
-          const dateString = dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+          const dateString = dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+          
+          // Evaluate the day based on the event rules
+          const { isAuspicious, reasons } = evaluateDay(d, formData.eventType);
+          
+          // Calculate the Choghadiya timeslots
+          const choghadiyas = calculateChoghadiya(
+            d.gregorian_date, 
+            d.sunrise_time, 
+            d.sunset_time, 
+            d.vaara_en
+          );
           
           return {
+            id: d.id,
             day: dayName,
             date: dateString,
-            timeWindow: '06:00 AM - 06:00 PM', // Placeholder if time isn't in the view
+            isAuspicious,
+            reasons,
+            choghadiyas,
             nakshatra: d.nakshatra_en || 'Unknown',
             tithi: d.tithi_en || 'Unknown',
-            reason: `${d.nakshatra_en || 'This Nakshatra'} and ${d.tithi_en || 'Tithi'} make this an auspicious date for ${formData.eventType.replace('_', ' ')}.`
           };
         });
-        setSearchResults(formattedResults);
+        
+        // Let's sort to put Auspicious days first, then Inauspicious
+        const sortedResults = formattedResults.sort((a, b) => (a.isAuspicious === b.isAuspicious) ? 0 : a.isAuspicious ? -1 : 1);
+        setSearchResults(sortedResults);
       } else {
-        setSearchResults([]); // No results found
+        setSearchResults([]); 
       }
     } catch (err) {
       console.error("Error fetching muhurat:", err);
-      // Fallback or show error
       setSearchResults([]);
     } finally {
       setIsLoading(false);
@@ -91,14 +107,95 @@ export default function Home() {
           </div>
         </div>
         
-        <div className={`${styles.heroImage} glass`}>
-          <div className={styles.mandala}>
-            <svg width="200" height="200" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="45" fill="none" stroke="var(--primary)" strokeWidth="2" strokeDasharray="5,5" />
-              <circle cx="50" cy="50" r="35" fill="none" stroke="var(--secondary)" strokeWidth="1" />
-              <path d="M50 15 L55 35 L75 35 L60 45 L65 65 L50 55 L35 65 L40 45 L25 35 L45 35 Z" fill="var(--primary)" opacity="0.8" />
-            </svg>
-          </div>
+        <div className={styles.heroImage}>
+          <svg width="340" height="340" viewBox="0 0 340 340" xmlns="http://www.w3.org/2000/svg" style={{ animation: 'spin 60s linear infinite' }}>
+            <defs>
+              <radialGradient id="planetGrad" cx="40%" cy="35%" r="60%">
+                <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.95" />
+                <stop offset="100%" stopColor="#92400e" stopOpacity="0.95" />
+              </radialGradient>
+              <radialGradient id="moonGrad" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stopColor="#e8e0c8" />
+                <stop offset="100%" stopColor="#9ca3af" />
+              </radialGradient>
+            </defs>
+
+            {/* Outer rings */}
+            <circle cx="170" cy="170" r="158" fill="none" stroke="rgba(245,158,11,0.12)" strokeWidth="1" />
+            <circle cx="170" cy="170" r="148" fill="none" stroke="rgba(245,158,11,0.07)" strokeWidth="0.5" />
+
+            {/* 12 clock-like ticks on outer edge */}
+            {Array.from({length:12}, (_,i) => {
+              const angle = i * 30 * Math.PI / 180;
+              const r1 = 150, r2 = 158;
+              return (
+                <line key={i}
+                  x1={170 + r1 * Math.sin(angle)} y1={170 - r1 * Math.cos(angle)}
+                  x2={170 + r2 * Math.sin(angle)} y2={170 - r2 * Math.cos(angle)}
+                  stroke="rgba(245,158,11,0.45)" strokeWidth={i % 3 === 0 ? 2 : 1}
+                />
+              );
+            })}
+
+            {/* 6 accent dots on outer ring */}
+            {[0, 60, 120, 180, 240, 300].map(angle => {
+              const x = 170 + 158 * Math.cos((angle - 90) * Math.PI / 180);
+              const y = 170 + 158 * Math.sin((angle - 90) * Math.PI / 180);
+              return <circle key={angle} cx={x} cy={y} r="2.5" fill="rgba(245,158,11,0.6)" />;
+            })}
+
+            {/* Moon orbit (dotted ring) */}
+            <circle cx="170" cy="170" r="130" fill="none" stroke="rgba(245,158,11,0.22)" strokeWidth="1" strokeDasharray="5 9" />
+
+            {/* Solid inner orbit */}
+            <circle cx="170" cy="170" r="108" fill="none" stroke="rgba(245,158,11,0.18)" strokeWidth="1" />
+
+            {/* Innermost decorative ring */}
+            <circle cx="170" cy="170" r="82" fill="none" stroke="rgba(245,158,11,0.14)" strokeWidth="1" strokeDasharray="2 7" />
+
+            {/* 8-spoke compass lines */}
+            {[0,45,90,135,180,225,270,315].map(angle => (
+              <line
+                key={angle}
+                x1={170 + 34 * Math.cos(angle * Math.PI / 180)}
+                y1={170 + 34 * Math.sin(angle * Math.PI / 180)}
+                x2={170 + 76 * Math.cos(angle * Math.PI / 180)}
+                y2={170 + 76 * Math.sin(angle * Math.PI / 180)}
+                stroke="rgba(245,158,11,0.28)"
+                strokeWidth="1"
+              />
+            ))}
+
+            {/* 4 dots on inner ring at cardinal points */}
+            {[0, 90, 180, 270].map(angle => {
+              const cx = 170 + 82 * Math.cos((angle - 90) * Math.PI / 180);
+              const cy = 170 + 82 * Math.sin((angle - 90) * Math.PI / 180);
+              return <circle key={angle} cx={cx} cy={cy} r="3.5" fill="rgba(245,158,11,0.55)" />;
+            })}
+
+            {/* Central sun / planet */}
+            <circle cx="170" cy="170" r="30" fill="url(#planetGrad)" />
+            <ellipse cx="162" cy="162" rx="9" ry="5" fill="rgba(255,255,255,0.1)" transform="rotate(-30,162,162)" />
+
+            {/* Saturn ring */}
+            <ellipse cx="170" cy="180" rx="46" ry="11" fill="none" stroke="rgba(245,158,11,0.35)" strokeWidth="2.5" />
+
+            {/* Orbiting crescent Moon */}
+            <g transform="rotate(-40, 170, 170)">
+              <circle cx="170" cy="40" r="15" fill="url(#moonGrad)" />
+              <circle cx="176" cy="40" r="12" fill="#0d0d18" />
+            </g>
+
+            {/* Small blue orbiting planet */}
+            <g transform="rotate(70, 170, 170)">
+              <circle cx="170" cy="40" r="8" fill="#4a6fa5" opacity="0.9" />
+            </g>
+
+            {/* Tiny gold orbiting dot */}
+            <g transform="rotate(200, 170, 170)">
+              <circle cx="170" cy="62" r="5" fill="#f59e0b" opacity="0.75" />
+            </g>
+          </svg>
         </div>
       </section>
 

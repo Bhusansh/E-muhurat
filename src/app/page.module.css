@@ -41,7 +41,6 @@
 .primaryBtn {
   background: var(--primary);
   color: white;
-  box-shadow: 0 4px 14px 0 rgba(217, 119, 6, 0.39);
 }
 
 .primaryBtn:hover {
@@ -70,11 +69,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 40px;
-  max-width: 500px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  animation: float 6s ease-in-out infinite;
+  max-width: 380px;
+  animation: float 8s ease-in-out infinite;
 }
 
 @keyframes float {
