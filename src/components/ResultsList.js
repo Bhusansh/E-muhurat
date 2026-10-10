@@ -63,8 +63,19 @@ export default function ResultsList({ results, isLoading }) {
                   <h4 className={styles.sectionTitle}>Why is this day {result.isAuspicious ? 'Good' : 'Bad'}?</h4>
                   <ul className={styles.reasonList}>
                     {result.reasons.map((r, i) => (
-                      <li key={i} className={r.good ? styles.reasonGood : styles.reasonBad}>
-                        {r.good ? '✅ ' : '❌ '}{r.text}
+                      <li key={i} className={r.good ? styles.reasonGood : styles.reasonBad} style={{ display: 'flex', alignItems: 'flex-start' }}>
+                        {r.good ? (
+                          <svg width="18" height="18" viewBox="0 0 24 24" style={{ marginRight: '8px', flexShrink: 0, marginTop: '2px' }}>
+                            <circle cx="12" cy="12" r="12" fill="#10b981"/>
+                            <path d="M10 15.586l-3.293-3.293 1.414-1.414L10 12.758l5.879-5.879 1.414 1.414L10 15.586z" fill="#fff"/>
+                          </svg>
+                        ) : (
+                          <svg width="18" height="18" viewBox="0 0 24 24" style={{ marginRight: '8px', flexShrink: 0, marginTop: '2px' }}>
+                            <circle cx="12" cy="12" r="12" fill="#ef4444"/>
+                            <path d="M16 9.41L14.59 8 12 10.59 9.41 8 8 9.41 10.59 12 8 14.59 9.41 16 12 13.41 14.59 16 16 14.59 13.41 12 16 9.41z" fill="#fff"/>
+                          </svg>
+                        )}
+                        <span>{r.text}</span>
                       </li>
                     ))}
                   </ul>

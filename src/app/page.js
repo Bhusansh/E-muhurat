@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import { supabase } from '../utils/supabase';
 import MuhuratForm from '@/components/MuhuratForm';
@@ -11,6 +11,11 @@ export default function Home() {
   const [searchResults, setSearchResults] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedEventType, setSelectedEventType] = useState('marriage');
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const serviceToEventValue = {
     'Marriage (Vivah)': 'marriage',
@@ -108,6 +113,7 @@ export default function Home() {
         </div>
         
         <div className={styles.heroImage}>
+          {isMounted && (
           <svg width="340" height="340" viewBox="0 0 340 340" xmlns="http://www.w3.org/2000/svg" style={{ animation: 'spin 60s linear infinite' }}>
             <defs>
               <radialGradient id="planetGrad" cx="40%" cy="35%" r="60%">
@@ -196,6 +202,7 @@ export default function Home() {
               <circle cx="170" cy="62" r="5" fill="#f59e0b" opacity="0.75" />
             </g>
           </svg>
+          )}
         </div>
       </section>
 

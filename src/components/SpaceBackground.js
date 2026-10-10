@@ -1,14 +1,22 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+
 export default function SpaceBackground() {
-  const stars = Array.from({ length: 80 }, (_, i) => ({
-    id: i,
-    size: Math.random() * 2.5 + 0.5,
-    top: Math.random() * 100,
-    left: Math.random() * 100,
-    delay: Math.random() * 5,
-    duration: Math.random() * 4 + 3,
-  }));
+  const [stars, setStars] = useState([]);
+
+  useEffect(() => {
+    setStars(
+      Array.from({ length: 80 }, (_, i) => ({
+        id: i,
+        size: Math.random() * 2.5 + 0.5,
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        delay: Math.random() * 5,
+        duration: Math.random() * 4 + 3,
+      }))
+    );
+  }, []);
 
   const celestials = [
     // Large ringed planet (Saturn-like)

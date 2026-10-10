@@ -14,6 +14,8 @@ export default function PanchangCalendar() {
   });
   const [city, setCity] = useState('New Delhi');
 
+  const [selectedDateDetails, setSelectedDateDetails] = useState(null);
+
   useEffect(() => {
     async function fetchPanchang() {
       setLoading(true);
@@ -36,12 +38,21 @@ export default function PanchangCalendar() {
 
         if (data && !error) {
           setDates(data);
+          // If no date is selected, or if we switched months, select the first auspicious date or just the 1st
+          const firstAuspicious = data.find(d => d.yoga_quality === 'Auspicious');
+          if (firstAuspicious) {
+            setSelectedDateDetails(firstAuspicious);
+          } else if (data.length > 0) {
+            setSelectedDateDetails(data[0]);
+          }
         } else {
           setDates([]);
+          setSelectedDateDetails(null);
         }
       } catch (err) {
         console.error("Failed to fetch panchang", err);
         setDates([]);
+        setSelectedDateDetails(null);
       } finally {
         setLoading(false);
       }
@@ -125,38 +136,72 @@ export default function PanchangCalendar() {
                 const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(dateNum).padStart(2, '0')}`;
                 const d = dates.find(x => x.gregorian_date === dateStr);
                 
+                const today = new Date();
+                const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                const isToday = dateStr === todayStr;
+
                 if (!d) {
                   return (
-                    <div key={`day-${dateNum}`} className={styles.dayCellEmpty}>
-                      <div className={styles.dateNumber}>{dateNum}</div>
+                    <div key={`day-${dateNum}`} className={`${styles.dayCellEmpty} ${isToday ? styles.today : ''}`}>
+                      <span className={styles.dateNumber}>{dateNum}</span>
                     </div>
                   );
                 }
 
                 const isAuspicious = d.yoga_quality === 'Auspicious';
+                const isSelected = selectedDateDetails?.gregorian_date === d.gregorian_date;
                 
                 return (
-                  <Link 
-                    href={`/panchang?date=${d.gregorian_date}&city=${city}`} 
-                    key={d.id} 
-                    className={`${styles.dayCell} ${isAuspicious ? styles.auspicious : ''}`}
-                    style={{ textDecoration: 'none', color: 'inherit' }}
+                  <div 
+                    key={d.gregorian_date} 
+                    className={`${styles.dayCell} ${isAuspicious ? styles.auspicious : ''} ${isSelected ? styles.selectedDay : ''} ${isToday ? styles.today : ''}`}
+                    onClick={() => setSelectedDateDetails(d)}
                   >
-                    <div className={styles.dateHeader}>
-                      <span className={styles.dateNumber}>{dateNum}</span>
-                      {isAuspicious && <span className={styles.indicatorDot}></span>}
-                    </div>
-                    <div className={styles.details}>
-                      <div className={styles.tithi}>{d.tithi_en?.split(' ')[0] || '-'}</div>
-                      <div className={styles.nakshatra}>{d.nakshatra_en?.split(' ')[0] || '-'}</div>
-                    </div>
-                    {isAuspicious && <div className={styles.auspiciousLabel}>Auspicious</div>}
-                  </Link>
+                    <span className={styles.dateNumber}>{dateNum}</span>
+                    {isAuspicious && <span className={styles.indicatorDot}></span>}
+                  </div>
                 );
               })}
             </>
           )}
         </div>
+
+        {/* Selected Date Details Panel */}
+        {!loading && selectedDateDetails && (
+          <div className={styles.detailsPanel}>
+            <div className={styles.detailsHeader}>
+              <div className={styles.detailsDate}>
+                {new Date(selectedDateDetails.gregorian_date).toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+              </div>
+              {selectedDateDetails.yoga_quality === 'Auspicious' && (
+                <div className={styles.detailsAuspiciousBadge}>Auspicious Day</div>
+              )}
+            </div>
+            
+            <div className={styles.detailsGrid}>
+              <div className={styles.detailItem}>
+                <span className={styles.detailLabel}>Tithi</span>
+                <span className={styles.detailValue}>{selectedDateDetails.tithi_en?.split(' ')[0] || '-'}</span>
+              </div>
+              <div className={styles.detailItem}>
+                <span className={styles.detailLabel}>Nakshatra</span>
+                <span className={styles.detailValue}>{selectedDateDetails.nakshatra_en?.split(' ')[0] || '-'}</span>
+              </div>
+              <div className={styles.detailItem}>
+                <span className={styles.detailLabel}>Sunrise</span>
+                <span className={styles.detailValue}>{selectedDateDetails.sunrise_time || '-'}</span>
+              </div>
+              <div className={styles.detailItem}>
+                <span className={styles.detailLabel}>Sunset</span>
+                <span className={styles.detailValue}>{selectedDateDetails.sunset_time || '-'}</span>
+              </div>
+            </div>
+
+            <Link href={`/panchang?date=${selectedDateDetails.gregorian_date}&city=${city}`} className={styles.viewFullBtn}>
+              View Full Panchang & Muhurat Details
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );
