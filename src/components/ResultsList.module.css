@@ -52,7 +52,79 @@
 .cardsGrid {
   display: flex;
   flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Groups ── */
+.groupsWrapper {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
+}
+
+.groupSection {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.groupHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  cursor: pointer;
+  border-left: 4px solid var(--accent, #22c55e);
+  transition: background 0.2s ease;
+  text-align: left;
+}
+
+.groupHeader:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.groupHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.groupIcon {
+  display: flex;
+  align-items: center;
+}
+
+.groupTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.groupCount {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: white;
+  padding: 2px 9px;
+  border-radius: 20px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.groupChevron {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  color: var(--foreground);
+}
+
+.emptyGroup {
+  padding: 20px;
+  opacity: 0.5;
+  font-size: 0.9rem;
+  text-align: center;
 }
 
 .resultCard {

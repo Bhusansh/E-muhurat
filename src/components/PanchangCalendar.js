@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import styles from './PanchangCalendar.module.css';
 import { supabase } from '../utils/supabase';
 
@@ -152,23 +153,34 @@ export default function PanchangCalendar() {
                 const isSelected = selectedDateDetails?.gregorian_date === d.gregorian_date;
                 
                 return (
-                  <div 
-                    key={d.gregorian_date} 
+                  <motion.div
+                    key={d.gregorian_date}
                     className={`${styles.dayCell} ${isAuspicious ? styles.auspicious : ''} ${isSelected ? styles.selectedDay : ''} ${isToday ? styles.today : ''}`}
                     onClick={() => setSelectedDateDetails(d)}
+                    whileHover={!isSelected ? { scale: 1.08, zIndex: 4 } : {}}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: 'spring', stiffness: 380, damping: 22 }}
                   >
                     <span className={styles.dateNumber}>{dateNum}</span>
                     {isAuspicious && <span className={styles.indicatorDot}></span>}
-                  </div>
+                  </motion.div>
                 );
               })}
             </>
           )}
         </div>
 
+        <AnimatePresence mode="wait">
         {/* Selected Date Details Panel */}
         {!loading && selectedDateDetails && (
-          <div className={styles.detailsPanel}>
+          <motion.div
+            key={selectedDateDetails.gregorian_date}
+            className={styles.detailsPanel}
+            initial={{ opacity: 0, y: -12, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >
             <div className={styles.detailsHeader}>
               <div className={styles.detailsDate}>
                 {new Date(selectedDateDetails.gregorian_date).toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
@@ -200,8 +212,9 @@ export default function PanchangCalendar() {
             <Link href={`/panchang?date=${selectedDateDetails.gregorian_date}&city=${city}`} className={styles.viewFullBtn}>
               View Full Panchang & Muhurat Details
             </Link>
-          </div>
+          </motion.div>
         )}
+        </AnimatePresence>
       </div>
     </div>
   );
